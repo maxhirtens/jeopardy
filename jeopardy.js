@@ -19,6 +19,8 @@
 //  ]
 const api_url = "https://jservice.io/api";
 const NUM_CATEGORIES = 6;
+const NUM_QUESTIONS_PER_CAT = 5;
+const $board = $('.game-board')
 
 /** Get NUM_CATEGORIES random categories from API.
  *
@@ -29,9 +31,9 @@ const catId = async function getCategoryIds() {
   let offsetAmount = Math.floor(Math.random()*100);
   const response = await axios.get(`${api_url}/categories?count=${NUM_CATEGORIES}&offset=${offsetAmount}`);
   for(let id of response.data){
-    categories.push(id)
+    categories.push(id.title)
   }
-  categories.forEach(e => console.log(e.title));
+  return categories;
 }
 
 /** Return object with data about a category:
@@ -46,7 +48,8 @@ const catId = async function getCategoryIds() {
  *   ]
  */
 
-function getCategory(catId) {
+async function getCategory(catId) {
+  let catObject = await axios.get()
 }
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
@@ -58,6 +61,30 @@ function getCategory(catId) {
  */
 
 async function fillTable() {
+  $board.empty();
+  let $header = $(`
+    <thead>
+      <tr></tr>
+    </thead>
+  `);
+  $board.append($header);
+  for(let cat of await catId()){
+    let $headerData = $(`<td>${cat}</td>`);
+     $header.append($headerData);
+     }
+  for(i=0; i<NUM_QUESTIONS_PER_CAT; i++){
+    let $cells = $(`
+    <tr>
+      <td class='${i+1}-1'>?</td>
+      <td class='${i+1}-2'>?</td>
+      <td class='${i+1}-3'>?</td>
+      <td class='${i+1}-4'>?</td>
+      <td class='${i+1}-5'>?</td>
+      <td class='${i+1}-5'>?</td>
+    </tr>
+    `);
+    $board.append($cells);
+  }
 }
 
 /** Handle clicking on a clue: show the question or answer.
@@ -94,8 +121,8 @@ function hideLoadingView() {
 
 async function setupAndStart() {
   showLoadingView();
-  // await fillTable();
-  // hideLoadingView();
+  await fillTable();
+  hideLoadingView();
 }
 
 /** On click of start / restart button, set up game. */
