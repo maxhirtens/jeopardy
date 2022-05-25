@@ -1,8 +1,7 @@
 body {
   background-image: url('/images/jeopardy_logo.jpg');
   background-size:100vw;
-  background-repeat: repeat-y;
-
+  background-repeat: no-repeat;
 }
 /* some colors you may find useful:
   #115ff4

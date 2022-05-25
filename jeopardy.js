@@ -133,4 +133,6 @@ $('#start-button').on('click', setupAndStart);
 
 /** On page load, add event handler for clicking clues */
 
-$('.cell').on('click', );
+$board.on('click', 'td', e =>
+  console.log(e.target)
+);
