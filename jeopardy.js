@@ -49,7 +49,9 @@ const catId = async function getCategoryIds() {
  */
 
 async function getCategory(catId) {
-  let catObject = await axios.get()
+  let response = await axios.get(`${api_url}/category?id=${catId}`);
+  console.log(response)
+  // let catObject = await axios.get(`${api_url}/category/500`)
 }
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
