@@ -24,7 +24,7 @@ const NUM_CATEGORIES = 6;
  *
  * Returns array of category ids
  */
-async function getCategoryIds() {
+const catId = async function getCategoryIds() {
   let categories = [];
   let offsetAmount = Math.floor(Math.random()*100);
   const response = await axios.get(`${api_url}/categories?count=${NUM_CATEGORIES}&offset=${offsetAmount}`);
@@ -76,12 +76,13 @@ function handleClick(evt) {
  */
 
 function showLoadingView() {
-
+  $('#loading-screen').attr('src', 'images/loading.gif');
 }
 
 /** Remove the loading spinner and update the button used to fetch data. */
 
 function hideLoadingView() {
+  $('#loading-screen').attr('src', '');
 }
 
 /** Start game:
@@ -93,8 +94,8 @@ function hideLoadingView() {
 
 async function setupAndStart() {
   showLoadingView();
-  await fillTable();
-  hideLoadingView();
+  // await fillTable();
+  // hideLoadingView();
 }
 
 /** On click of start / restart button, set up game. */

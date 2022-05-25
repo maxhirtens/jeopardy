@@ -1,3 +1,8 @@
+body {
+  background-image: url('/images/jeopardy_logo.jpg');
+  background-size:100vw;
+  background-repeat: no-repeat;
+}
 /* some colors you may find useful:
   #115ff4
   #060ce9
@@ -5,3 +10,19 @@
   #8d2ab5
   #74119c
 */
+
+button {
+  font-size: 2vw;
+  padding: .75rem;
+}
+
+img {
+  opacity: 0.33;
+}
+
+button, img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+}
