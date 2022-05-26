@@ -21,18 +21,19 @@ const api_url = "https://jservice.io/api";
 const NUM_CATEGORIES = 6;
 const NUM_QUESTIONS_PER_CAT = 5;
 const $board = $('.game-board')
-
+let categories = [];
 /** Get NUM_CATEGORIES random categories from API.
  *
  * Returns array of category ids
  */
-let catId = async function getCategoryIds() {
+async function getCategoryIds() {
   let catIds = [];
   let offsetAmount = Math.floor(Math.random()*100);
   const response = await axios.get(`${api_url}/categories?count=${NUM_CATEGORIES}&offset=${offsetAmount}`);
   for(let item of response.data){
     catIds.push(item.id)
   }
+  console.log(catIds);
   return catIds;
 }
 
@@ -48,13 +49,17 @@ let catId = async function getCategoryIds() {
  *   ]
  */
 
-let categoryInfo = async function getCategory(catIds) {
-  let response = await axios.get(`${api_url}/category?id=${catIds}`);
+async function getCategory(catId) {
+  let response = await axios.get(`${api_url}/category?id=${catId}`);
   let clues = response.data.clues.map(c => ({
     question: c.question,
     answer: c.answer,
     showing: null
   })).slice(0,5);
+  console.log({
+    title: response.data.title,
+    clues
+  });
   return ({
     title: response.data.title,
     clues
@@ -68,7 +73,33 @@ let categoryInfo = async function getCategory(catIds) {
  *   each with a question for each category in a <td>
  *   (initally, just show a "?" where the question/answer would go.)
  */
-
+//  async function fillTable() {
+//   $board.empty();
+//   let $header = $(`
+//     <thead>
+//       <tr></tr>
+//     </thead>
+//   `);
+//   $board.append($header);
+//   for(let cat of await getCategoryIds()){
+//     let title = await getCategory(cat);
+//     let $headerData = $(`<td>${title.title}</td>`);
+//      $header.append($headerData);
+//      }
+//   for(i=0; i<NUM_QUESTIONS_PER_CAT; i++){
+//     let $cells = $(`
+//     <tr>
+//       <td class='${i+1}-1'>?</td>
+//       <td class='${i+1}-2'>?</td>
+//       <td class='${i+1}-3'>?</td>
+//       <td class='${i+1}-4'>?</td>
+//       <td class='${i+1}-5'>?</td>
+//       <td class='${i+1}-6'>?</td>
+//     </tr>
+//     `);
+//     $board.append($cells);
+//   }
+// }
 async function fillTable() {
   $board.empty();
   let $header = $(`
@@ -77,20 +108,20 @@ async function fillTable() {
     </thead>
   `);
   $board.append($header);
-  for(let cat of await catId()){
-    let title = await categoryInfo(cat);
-    let $headerData = $(`<td>${title.title}</td>`);
+  for(let cat of categories){
+    let title = cat.title;
+    let $headerData = $(`<td>${title}</td>`);
      $header.append($headerData);
      }
   for(i=0; i<NUM_QUESTIONS_PER_CAT; i++){
     let $cells = $(`
     <tr>
-      <td class='${i+1}-1'>?</td>
-      <td class='${i+1}-2'>?</td>
-      <td class='${i+1}-3'>?</td>
-      <td class='${i+1}-4'>?</td>
-      <td class='${i+1}-5'>?</td>
-      <td class='${i+1}-6'>?</td>
+      <td class='${i}-0'>?</td>
+      <td class='${i}-1'>?</td>
+      <td class='${i}-2'>?</td>
+      <td class='${i}-3'>?</td>
+      <td class='${i}-4'>?</td>
+      <td class='${i}-5'>?</td>
     </tr>
     `);
     $board.append($cells);
@@ -106,12 +137,19 @@ async function fillTable() {
  * */
 
 async function handleClick(evt) {
-  // I got the .split method idea from https://jeopardy-example.surge.sh/
+  // I got some of these methods from https://jeopardy-example.surge.sh/
+  console.log(evt.target.innerHTML);
+  // need to figure out problem with ampersands.
   let id = evt.target.className;
   let [clueId, catId] = id.split('-');
-  console.log(catId, clueId);
-  let text = 'test1';
-  $(`.${clueId}-${catId}`).html(text);
+  // console.log(catId, clueId);
+  let clue = categories[catId].clues[clueId];
+  let cell = `.${clueId}-${catId}`
+  if(evt.target.innerHTML === '?'){
+  $(cell).html(clue.question);
+  } else if(evt.target.innerHTML === clue.question){
+    $(cell).html(clue.answer);
+  } else return
 }
 
 /** Wipe the current Jeopardy board, show the loading spinner,
@@ -136,6 +174,10 @@ function hideLoadingView() {
  * */
 
 async function setupAndStart() {
+  let catIds = await getCategoryIds();
+  for (let catId of catIds) {
+    categories.push(await getCategory(catId));
+  }
   showLoadingView();
   await fillTable();
   hideLoadingView();
