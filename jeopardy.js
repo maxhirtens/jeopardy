@@ -26,14 +26,14 @@ const $board = $('.game-board')
  *
  * Returns array of category ids
  */
-const catId = async function getCategoryIds() {
-  let categories = [];
+let catId = async function getCategoryIds() {
+  let catIds = [];
   let offsetAmount = Math.floor(Math.random()*100);
   const response = await axios.get(`${api_url}/categories?count=${NUM_CATEGORIES}&offset=${offsetAmount}`);
-  for(let id of response.data){
-    categories.push(id.title)
+  for(let item of response.data){
+    catIds.push(item.id)
   }
-  return categories;
+  return catIds;
 }
 
 /** Return object with data about a category:
@@ -48,10 +48,17 @@ const catId = async function getCategoryIds() {
  *   ]
  */
 
-async function getCategory(catId) {
-  let response = await axios.get(`${api_url}/category?id=${catId}`);
-  console.log(response)
-  // let catObject = await axios.get(`${api_url}/category/500`)
+let categoryInfo = async function getCategory(catIds) {
+  let response = await axios.get(`${api_url}/category?id=${catIds}`);
+  let clues = response.data.clues.map(c => ({
+    question: c.question,
+    answer: c.answer,
+    showing: null
+  })).slice(0,5);
+  return ({
+    title: response.data.title,
+    clues
+  })
 }
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
@@ -71,7 +78,8 @@ async function fillTable() {
   `);
   $board.append($header);
   for(let cat of await catId()){
-    let $headerData = $(`<td>${cat}</td>`);
+    let title = await categoryInfo(cat);
+    let $headerData = $(`<td>${title.title}</td>`);
      $header.append($headerData);
      }
   for(i=0; i<NUM_QUESTIONS_PER_CAT; i++){
@@ -82,7 +90,7 @@ async function fillTable() {
       <td class='${i+1}-3'>?</td>
       <td class='${i+1}-4'>?</td>
       <td class='${i+1}-5'>?</td>
-      <td class='${i+1}-5'>?</td>
+      <td class='${i+1}-6'>?</td>
     </tr>
     `);
     $board.append($cells);
@@ -97,7 +105,13 @@ async function fillTable() {
  * - if currently "answer", ignore click
  * */
 
-function handleClick(evt) {
+async function handleClick(evt) {
+  // I got the .split method idea from https://jeopardy-example.surge.sh/
+  let id = evt.target.className;
+  let [clueId, catId] = id.split('-');
+  console.log(catId, clueId);
+  let text = 'test1';
+  $(`.${clueId}-${catId}`).html(text);
 }
 
 /** Wipe the current Jeopardy board, show the loading spinner,
@@ -133,6 +147,4 @@ $('#start-button').on('click', setupAndStart);
 
 /** On page load, add event handler for clicking clues */
 
-$board.on('click', 'td', e =>
-  console.log(e.target)
-);
+$board.on('click', 'td', handleClick);
