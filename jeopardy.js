@@ -145,9 +145,9 @@ async function handleClick(evt) {
   // console.log(catId, clueId);
   let clue = categories[catId].clues[clueId];
   let cell = `.${clueId}-${catId}`
-  if(evt.target.innerHTML === '?'){
+  if(evt.target.innerText === '?'){
   $(cell).html(clue.question);
-  } else if(evt.target.innerHTML === clue.question){
+  } else if(evt.target.innerText === clue.question){
     $(cell).html(clue.answer);
   } else return
 }
@@ -175,6 +175,7 @@ function hideLoadingView() {
 
 async function setupAndStart() {
   let catIds = await getCategoryIds();
+  categories = [];
   for (let catId of catIds) {
     categories.push(await getCategory(catId));
   }
