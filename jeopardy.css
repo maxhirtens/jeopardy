@@ -1,7 +1,8 @@
 body {
   background-image: url('/images/jeopardy_logo.jpg');
-  background-size:100vw;
+  background-size:1200px;
   background-repeat: no-repeat;
+  text-shadow: 2px 2px 4px black;
 }
 /* some colors you may find useful:
   #115ff4
@@ -12,8 +13,10 @@ body {
 */
 
 button {
-  font-size: 16pt;
-  padding: .75rem;
+  font-size: 14pt;
+  padding: .5rem;
+  margin: 2rem;
+  text-shadow: 2px 2px 4px rgb(180, 168, 168);
 }
 
 img {
@@ -30,16 +33,18 @@ button, img {
 table {
   color: whitesmoke;
   background-color: #060ce9;
-  margin: 40px;
+  margin-left: 100px;
+  margin-top: 10px;
   /* border: 1px solid whitesmoke; */
 }
 
 td  {
   border: 1px solid whitesmoke;
-  padding: 2rem;
+  padding: 1.5rem;
   width: 100px;
   text-align: center;
   font-size: small;
+
 }
 
 thead {

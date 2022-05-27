@@ -33,7 +33,6 @@ async function getCategoryIds() {
   for(let item of response.data){
     catIds.push(item.id)
   }
-  console.log(catIds);
   return catIds;
 }
 
@@ -51,15 +50,10 @@ async function getCategoryIds() {
 
 async function getCategory(catId) {
   let response = await axios.get(`${api_url}/category?id=${catId}`);
-  let clues = response.data.clues.map(c => ({
-    question: c.question,
-    answer: c.answer,
-    showing: null
+  let clues = response.data.clues.map(e => ({
+    question: e.question,
+    answer: e.answer,
   })).slice(0,5);
-  console.log({
-    title: response.data.title,
-    clues
-  });
   return ({
     title: response.data.title,
     clues
@@ -73,33 +67,6 @@ async function getCategory(catId) {
  *   each with a question for each category in a <td>
  *   (initally, just show a "?" where the question/answer would go.)
  */
-//  async function fillTable() {
-//   $board.empty();
-//   let $header = $(`
-//     <thead>
-//       <tr></tr>
-//     </thead>
-//   `);
-//   $board.append($header);
-//   for(let cat of await getCategoryIds()){
-//     let title = await getCategory(cat);
-//     let $headerData = $(`<td>${title.title}</td>`);
-//      $header.append($headerData);
-//      }
-//   for(i=0; i<NUM_QUESTIONS_PER_CAT; i++){
-//     let $cells = $(`
-//     <tr>
-//       <td class='${i+1}-1'>?</td>
-//       <td class='${i+1}-2'>?</td>
-//       <td class='${i+1}-3'>?</td>
-//       <td class='${i+1}-4'>?</td>
-//       <td class='${i+1}-5'>?</td>
-//       <td class='${i+1}-6'>?</td>
-//     </tr>
-//     `);
-//     $board.append($cells);
-//   }
-// }
 async function fillTable() {
   $board.empty();
   let $header = $(`
@@ -138,11 +105,8 @@ async function fillTable() {
 
 async function handleClick(evt) {
   // I got some of these methods from https://jeopardy-example.surge.sh/
-  console.log(evt.target.innerHTML);
-  // need to figure out problem with ampersands.
   let id = evt.target.className;
   let [clueId, catId] = id.split('-');
-  // console.log(catId, clueId);
   let clue = categories[catId].clues[clueId];
   let cell = `.${clueId}-${catId}`
   if(evt.target.innerText === '?'){
@@ -174,6 +138,7 @@ function hideLoadingView() {
  * */
 
 async function setupAndStart() {
+  // Idea for putting this method here from https://jeopardy-example.surge.sh/
   let catIds = await getCategoryIds();
   categories = [];
   for (let catId of catIds) {
